@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:location/location.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,14 +32,14 @@ RefreshController _refreshController = RefreshController();
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   var currentTime = new DateTime.now();
-  var location = new Location();
-  LocationData userLocation;
-  bool locationPermission = false;
+//  var location = new Location();
+//  LocationData userLocation;
+//  bool locationPermission = false;
 
   void initState() {
     super.initState();
     _refreshController = RefreshController();
-    setLocation();
+//    setLocation();
   }
 
   void _onRefresh() {
@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
           use _refreshController.refreshComplete() or refreshFailed() to end refreshing
     */
     _refreshController.refreshFailed();
-    setLocation();
+//    setLocation();
   }
 
   void _onLoading() {
@@ -57,12 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _refreshController.loadNoData();
   }
 
-  void _permissionChange(bool value) {
+  /*void _permissionChange(bool value) {
     setState(() {
       locationPermission = value;
     });
     setLocation();
-  }
+  }*/
 
   void _incrementCounter() {
     setState(() {
@@ -97,13 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: Theme.of(context).textTheme.display1,
                   ),
                   Text('현재 시간 - $currentTime'),
-                  Text(locationPermission && userLocation != null
+                  /*Text(locationPermission && userLocation != null
                       ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                       : '위치 권한 없음'),
                   SwitchListTile(
                       value: locationPermission,
                       onChanged: _permissionChange,
-                      title: Text('위치 권한'))
+                      title: Text('위치 권한'))*/
                   // 위도 - userLocation.latitude
                   // 경도 - userLocation.longitude
                   // 고도 - userLocation.altitude
@@ -121,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  setLocation() async {
+  /*setLocation() async {
     await location.changeSettings(
         accuracy: LocationAccuracy.HIGH, interval: 1000);
     LocationData currentLocation;
@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
       userLocation = currentLocation;
       currentTime = new DateTime.now();
     });
-  }
+  }*/
 
   void dispose() {
     _refreshController.dispose();
