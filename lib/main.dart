@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() {
   var model = MainModel();
@@ -11,6 +12,7 @@ void main() {
 class MainModel extends Model {
   var time = new DateTime.now();
   var counter = 0;
+  Position position;
 
   counterIncrement() {
     counter += 1;
@@ -24,6 +26,11 @@ class MainModel extends Model {
 
   refreshTime() {
     time = new DateTime.now();
+    notifyListeners();
+  }
+
+  refreshPosition() async {
+    position = await Geolocator().getLastKnownPosition();
     notifyListeners();
   }
 
@@ -68,6 +75,9 @@ class MyHomePage extends StatelessWidget {
                     style: Theme.of(context).textTheme.display1,
                   ),
                   Text('현재 시간 - ${model.time}'),
+                  Text(model.position != null
+                      ? '현재 위치 - ${model.position.latitude.toString()}, ${model.position.longitude.toString()}'
+                      : 'Unknown'),
                   /*Text(locationPermission && userLocation != null
                     ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                     : '위치 권한 없음'),
@@ -88,6 +98,7 @@ class MyHomePage extends StatelessWidget {
         onPressed: () {
           MainModel.of(context).counterIncrement();
           MainModel.of(context).refreshTime();
+          MainModel.of(context).refreshPosition();
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
