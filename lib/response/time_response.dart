@@ -6,7 +6,7 @@ part 'time_response.g.dart';
 class TimeResponse {
   String s;
   String tz;
-  String v;
+  int v;
 
   TimeResponse({
     this.s,

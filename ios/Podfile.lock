@@ -1,22 +1,34 @@
 PODS:
   - Flutter (1.0.0)
-  - location (0.0.1):
+  - geolocator (5.0.0):
+    - Flutter
+  - google_api_availability (2.0.1):
+    - Flutter
+  - location_permissions (2.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
-  - location (from `.symlinks/plugins/location/ios`)
+  - geolocator (from `.symlinks/plugins/geolocator/ios`)
+  - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
+  - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
-  location:
-    :path: ".symlinks/plugins/location/ios"
+  geolocator:
+    :path: ".symlinks/plugins/geolocator/ios"
+  google_api_availability:
+    :path: ".symlinks/plugins/google_api_availability/ios"
+  location_permissions:
+    :path: ".symlinks/plugins/location_permissions/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  geolocator: e4b2eb18983ed5ca3d8a64f7547f00c8fe110a51
+  google_api_availability: cd29400b9c6eb73b0978f609f0ad66f41dfa90b4
+  location_permissions: 37b923ed4b9df9dfe9edb109fb4298f7b182047b
 
 PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
 
-COCOAPODS: 1.6.2
+COCOAPODS: 1.5.3

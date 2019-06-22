@@ -8,7 +8,7 @@ part of 'time_response.dart';
 
 TimeResponse _$TimeResponseFromJson(Map<String, dynamic> json) {
   return TimeResponse(
-      s: json['s'] as String, tz: json['tz'] as String, v: json['v'] as String);
+      s: json['s'] as String, tz: json['tz'] as String, v: json['v'] as int);
 }
 
 Map<String, dynamic> _$TimeResponseToJson(TimeResponse instance) =>
