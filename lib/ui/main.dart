@@ -62,9 +62,6 @@ class HomePage extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'You have pushed the button this many times:',
-                  ),
                   Text('현재 시간 - ${model.time}'),
                   Text('미세먼지 정보 : ${model.fineDustResponse.iaqi.pm25.v.toString()}'),
                   /*Text(locationPermission && userLocation != null
