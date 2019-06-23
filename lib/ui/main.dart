@@ -1,83 +1,69 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:misemeonjigadoeeo/model/app_model.dart';
+import 'package:misemeonjigadoeeo/model/fine_dust_model.dart';
+import 'package:misemeonjigadoeeo/model/pos_model.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:geolocator/geolocator.dart';
 
 void main() {
-  var model = MainModel();
-  runApp(ScopedModel<MainModel>(model: model, child: MyApp()));
-}
-
-class MainModel extends Model {
-  var time = new DateTime.now();
-  var counter = 0;
-  Position position;
-
-  counterIncrement() {
-    counter += 1;
-    notifyListeners();
-  }
-
-  counterDecrement() {
-    counter -= 1;
-    notifyListeners();
-  }
-
-  refreshTime() {
-    time = new DateTime.now();
-    notifyListeners();
-  }
-
-  refreshPosition() async {
-    position = await Geolocator().getLastKnownPosition();
-    notifyListeners();
-  }
-
-  static MainModel of(BuildContext context) =>
-      ScopedModel.of<MainModel>(context);
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-      ),
-      home: MyHomePage(title: 'Misemeonjigadoeeo'),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.grey,
+        ),
+        home: ScopedModel<AppModel>(model: AppModel(), child: HomePage()));
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+class HomePage extends StatelessWidget {
+  var apiCallCount = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ScopedModelDescendant<MainModel>(
-          builder: (context, child, model) =>
-          ListView(
+    return ScopedModelDescendant<AppModel>(
+      builder: (context, child, model) =>
+          Scaffold(
+            body: getPosition(model),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                getPosition(model);
+              },
+              tooltip: 'Increment',
+              child: Icon(Icons.add),
+            ),
+          ),
+    );
+  }
+
+  Widget getPosition(AppModel model) {
+    if (model.position != null) {
+      return getFineDust(model);
+    }
+    model.refreshPosition();
+
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget getFineDust(AppModel model) {
+    Widget fineDustWidget;
+
+    if (model.fineDustResponse != null) {
+      fineDustWidget = Center(
+          child: ListView(
             children: <Widget>[
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'You have pushed the button this many times:',
-                  ),
-                  Text(
-                    model.counter.toString(),
-                    style: Theme.of(context).textTheme.display1,
-                  ),
                   Text('현재 시간 - ${model.time}'),
-                  Text(model.position != null
-                      ? '현재 위치 - ${model.position.latitude.toString()}, ${model.position.longitude.toString()}'
-                      : 'Unknown'),
+                  Text('미세먼지 정보 : ${model.fineDustResponse.iaqi.pm25.v.toString()}'),
                   /*Text(locationPermission && userLocation != null
                     ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                     : '위치 권한 없음'),
@@ -92,18 +78,13 @@ class MyHomePage extends StatelessWidget {
               )
             ],
           )
-        )
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          MainModel.of(context).counterIncrement();
-          MainModel.of(context).refreshTime();
-          MainModel.of(context).refreshPosition();
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-    );
+      );
+    } else {
+      model.getFineDustInfo(model.position);
+      fineDustWidget = Center(child: CircularProgressIndicator());
+    }
+
+    return fineDustWidget;
   }
 }
 
@@ -123,26 +104,26 @@ RefreshController _refreshController = RefreshController();
   }
 
   void _onRefresh() {
-    *//*.  after the data return,
+    */ /*.  after the data return,
           use _refreshController.refreshComplete() or refreshFailed() to end refreshing
-    *//*
+    */ /*
     _refreshController.refreshFailed();
 //    setLocation();
   }
 
   void _onLoading() {
-    *//*
+    */ /*
           use _refreshController.loadComplete() or loadNoData() to end loading
-    *//*
+    */ /*
     _refreshController.loadNoData();
   }
 
-  *//*void _permissionChange(bool value) {
+  */ /*void _permissionChange(bool value) {
     setState(() {
       locationPermission = value;
     });
     setLocation();
-  }*//*
+  }*/ /*
 
   void _incrementCounter() {
     setState(() {
@@ -177,13 +158,13 @@ RefreshController _refreshController = RefreshController();
                     style: Theme.of(context).textTheme.display1,
                   ),
                   Text('현재 시간 - $currentTime'),
-                  *//*Text(locationPermission && userLocation != null
+                  */ /*Text(locationPermission && userLocation != null
                       ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                       : '위치 권한 없음'),
                   SwitchListTile(
                       value: locationPermission,
                       onChanged: _permissionChange,
-                      title: Text('위치 권한'))*//*
+                      title: Text('위치 권한'))*/ /*
                   // 위도 - userLocation.latitude
                   // 경도 - userLocation.longitude
                   // 고도 - userLocation.altitude
@@ -201,7 +182,7 @@ RefreshController _refreshController = RefreshController();
     );
   }
 
-  *//*setLocation() async {
+  */ /*setLocation() async {
     await location.changeSettings(
         accuracy: LocationAccuracy.HIGH, interval: 1000);
     LocationData currentLocation;
@@ -238,7 +219,7 @@ RefreshController _refreshController = RefreshController();
       userLocation = currentLocation;
       currentTime = new DateTime.now();
     });
-  }*//*
+  }*/ /*
 
   void dispose() {
     _refreshController.dispose();
