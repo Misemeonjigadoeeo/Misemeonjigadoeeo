@@ -24,11 +24,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/location_permissions/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  geolocator: e4b2eb18983ed5ca3d8a64f7547f00c8fe110a51
-  google_api_availability: cd29400b9c6eb73b0978f609f0ad66f41dfa90b4
-  location_permissions: 37b923ed4b9df9dfe9edb109fb4298f7b182047b
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  geolocator: 72bbbbb02210448315d79c4e5158cc04e111a62c
+  google_api_availability: 163b30f802e6148c67f092aa4501c90ddd8eec8d
+  location_permissions: db47e77cf4f1359866d627523fb7812899a752f3
 
 PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.2

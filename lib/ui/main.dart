@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:misemeonjigadoeeo/model/app_model.dart';
 import 'package:misemeonjigadoeeo/model/fine_dust_model.dart';
@@ -14,12 +16,18 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.grey,
-        ),
-        home: ScopedModel<AppModel>(model: AppModel(), child: HomePage()));
+    if (Platform.isAndroid) {
+      return MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(primarySwatch: Colors.grey),
+          home: ScopedModel<AppModel>(model: AppModel(), child: HomePage()));
+    } else {
+      return CupertinoApp(
+          title: 'Flutter Demo',
+          theme: CupertinoThemeData(
+              primaryColor: CupertinoColors.lightBackgroundGray),
+          home: ScopedModel<AppModel>(model: AppModel(), child: HomePage()));
+    }
   }
 }
 
@@ -29,18 +37,42 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
-      builder: (context, child, model) =>
-          Scaffold(
-            body: getPosition(model),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                getPosition(model);
-              },
-              tooltip: 'Increment',
-              child: Icon(Icons.add),
-            ),
-          ),
-    );
+        builder: (context, child, model) => Platform.isAndroid
+            ? Scaffold(
+                body: getPosition(model),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    getPosition(model);
+                  },
+                  tooltip: 'Increment',
+                  child: Icon(Icons.add),
+                ),
+              )
+            : CupertinoPageScaffold(
+                child: SafeArea(
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    CupertinoSliverRefreshControl(
+                      onRefresh: () {
+                        return Future<void>.delayed(const Duration(seconds: 1))
+                          ..then<void>((_) {
+                            model.refreshPosition();
+                            model.refreshTime();
+                          });
+                      },
+                    ),
+                    SliverFixedExtentList(
+                      itemExtent: 100,
+                      delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        return Container(
+                          child: getPosition(model),
+                        );
+                      }, childCount: 1),
+                    )
+                  ],
+                ),
+              )));
   }
 
   Widget getPosition(AppModel model) {
@@ -58,27 +90,27 @@ class HomePage extends StatelessWidget {
     if (model.fineDustResponse != null) {
       fineDustWidget = Center(
           child: ListView(
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('현재 시간 - ${model.time}'),
-                  Text('미세먼지 정보 : ${model.fineDustResponse.iaqi.pm25.v.toString()}'),
-                  /*Text(locationPermission && userLocation != null
+              Text('현재 시간 - ${model.time}'),
+              Text(
+                  '미세먼지 정보 : ${model.fineDustResponse.iaqi.pm25.v.toString()}'),
+              /*Text(locationPermission && userLocation != null
                     ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                     : '위치 권한 없음'),
                 SwitchListTile(
                     value: locationPermission,
                     onChanged: _permissionChange,
                     title: Text('위치 권한'))*/
-                  // 위도 - userLocation.latitude
-                  // 경도 - userLocation.longitude
-                  // 고도 - userLocation.altitude
-                ],
-              )
+              // 위도 - userLocation.latitude
+              // 경도 - userLocation.longitude
+              // 고도 - userLocation.altitude
             ],
           )
-      );
+        ],
+      ));
     } else {
       model.getFineDustInfo(model.position);
       fineDustWidget = Center(child: CircularProgressIndicator());
