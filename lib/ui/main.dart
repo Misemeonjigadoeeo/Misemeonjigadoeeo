@@ -1,13 +1,16 @@
-import 'dart:developer';
-import 'dart:io' show Platform;
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:misemeonjigadoeeo/model/app_model.dart';
-import 'package:misemeonjigadoeeo/model/fine_dust_model.dart';
-import 'package:misemeonjigadoeeo/model/pos_model.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:scoped_model/scoped_model.dart';
+
+import 'package:provider/provider.dart';
+
+// models
+import 'package:misemeonjigadoeeo/models/device.dart';
+import 'package:misemeonjigadoeeo/models/fine_dust.dart';
+
+// providers
+import 'package:misemeonjigadoeeo/providers/providers.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,245 +19,121 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (Platform.isAndroid) {
-      return MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(primarySwatch: Colors.grey),
-          home: ScopedModel<AppModel>(model: AppModel(), child: HomePage()));
-    } else {
-      return CupertinoApp(
-          title: 'Flutter Demo',
-          theme: CupertinoThemeData(
-              primaryColor: CupertinoColors.lightBackgroundGray),
-          home: ScopedModel<AppModel>(model: AppModel(), child: HomePage()));
-    }
+    return ChangeNotifierProvider(
+      builder: (context) => AppProvider(),
+      child: Platform.isAndroid
+          ? MaterialApp(
+              title: 'Flutter Demo',
+              theme: ThemeData.dark(),
+              home: Consumer<AppProvider>(
+                builder: (context, provider, child) => HomePage(
+                    device: provider.device, fineDust: provider.fineDust),
+              ))
+          : CupertinoApp(
+              title: 'Flutter Demo',
+              theme: CupertinoThemeData(
+                  primaryColor: CupertinoColors.lightBackgroundGray),
+              home: HomePage()),
+    );
   }
 }
 
 class HomePage extends StatelessWidget {
+  final Device device;
+  final FineDust fineDust;
   var apiCallCount = 0;
+
+  HomePage({this.device, this.fineDust});
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<AppModel>(
-        builder: (context, child, model) => Platform.isAndroid
-            ? Scaffold(
-                body: getPosition(model),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () {
-                    getPosition(model);
+    return Platform.isAndroid
+        ? Scaffold(
+            body: getPosition(device, fineDust),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                print(fineDust.isLoaded);
+                Provider.of<AppProvider>(context, listen: false)
+                    .refreshPosition(device);
+                Provider.of<AppProvider>(context, listen: false)
+                    .refreshTime(device);
+                if (device.position != null) {
+                  Provider.of<AppProvider>(context, listen: false)
+                      .getFineDustInfo(fineDust, device.position);
+                }
+              },
+              tooltip: 'Increment',
+              child: Icon(Icons.refresh),
+            ),
+          )
+        : CupertinoPageScaffold(
+            child: SafeArea(
+            child: CustomScrollView(
+              slivers: <Widget>[
+                CupertinoSliverRefreshControl(
+                  onRefresh: () {
+                    return Future<void>.delayed(const Duration(seconds: 1))
+                      ..then<void>((_) {
+                        // provider.refreshPosition();
+                        // provider.refreshTime();
+                      });
                   },
-                  tooltip: 'Increment',
-                  child: Icon(Icons.add),
                 ),
-              )
-            : CupertinoPageScaffold(
-                child: SafeArea(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    CupertinoSliverRefreshControl(
-                      onRefresh: () {
-                        return Future<void>.delayed(const Duration(seconds: 1))
-                          ..then<void>((_) {
-                            model.refreshPosition();
-                            model.refreshTime();
-                          });
-                      },
-                    ),
-                    SliverFixedExtentList(
-                      itemExtent: 100,
-                      delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                        return Container(
-                          child: getPosition(model),
-                        );
-                      }, childCount: 1),
-                    )
-                  ],
-                ),
-              )));
+                SliverFixedExtentList(
+                  itemExtent: 100,
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                    return Container(
+                      child: device.position != null
+                          ? getFineDust(device, fineDust)
+                          : Center(child: CircularProgressIndicator()),
+                    );
+                  }, childCount: 1),
+                )
+              ],
+            ),
+          ));
   }
 
-  Widget getPosition(AppModel model) {
-    if (model.position != null) {
-      return getFineDust(model);
+  Widget getPosition(Device device, FineDust fineDust) {
+    if (device.position != null) {
+      return getFineDust(device, fineDust);
     }
-    model.refreshPosition();
+    device.refreshPosition();
 
     return Center(child: CircularProgressIndicator());
   }
 
-  Widget getFineDust(AppModel model) {
+  Widget getFineDust(Device device, FineDust fineDust) {
     Widget fineDustWidget;
 
-    if (model.fineDustResponse != null) {
+    if (fineDust.fineDustResponse != null) {
       fineDustWidget = Center(
-          child: ListView(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('현재 시간 - ${model.time}'),
-              Text(
-                  '미세먼지 정보 : ${model.fineDustResponse.iaqi.pm25.v.toString()}'),
-              /*Text(locationPermission && userLocation != null
+          Text('현재 시간 - ${device.time}'),
+          SizedBox(
+            height: 10,
+          ),
+          Text('미세먼지 정보 : ${fineDust.fineDustResponse.iaqi.pm25.v.toString()}'),
+          /*Text(locationPermission && userLocation != null
                     ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                     : '위치 권한 없음'),
                 SwitchListTile(
                     value: locationPermission,
                     onChanged: _permissionChange,
                     title: Text('위치 권한'))*/
-              // 위도 - userLocation.latitude
-              // 경도 - userLocation.longitude
-              // 고도 - userLocation.altitude
-            ],
-          )
+          // 위도 - userLocation.latitude
+          // 경도 - userLocation.longitude
+          // 고도 - userLocation.altitude
         ],
       ));
     } else {
-      model.getFineDustInfo(model.position);
+      fineDust.getFineDustInfo(device.position);
       fineDustWidget = Center(child: CircularProgressIndicator());
     }
 
     return fineDustWidget;
   }
 }
-
-RefreshController _refreshController = RefreshController();
-
-/*class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  var currentTime = new DateTime.now();
-//  var location = new Location();
-//  LocationData userLocation;
-//  bool locationPermission = false;
-
-  void initState() {
-    super.initState();
-    _refreshController = RefreshController();
-//    setLocation();
-  }
-
-  void _onRefresh() {
-    */ /*.  after the data return,
-          use _refreshController.refreshComplete() or refreshFailed() to end refreshing
-    */ /*
-    _refreshController.refreshFailed();
-//    setLocation();
-  }
-
-  void _onLoading() {
-    */ /*
-          use _refreshController.loadComplete() or loadNoData() to end loading
-    */ /*
-    _refreshController.loadNoData();
-  }
-
-  */ /*void _permissionChange(bool value) {
-    setState(() {
-      locationPermission = value;
-    });
-    setLocation();
-  }*/ /*
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    AppBar appbar = AppBar(
-      title: Text(widget.title),
-    );
-    return Scaffold(
-      appBar: appbar,
-      body: Container(
-        child: SmartRefresher(
-          enablePullDown: true,
-          header: WaterDropHeader(),
-          controller: _refreshController,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          child: ListView(
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'You have pushed the button this many times:',
-                  ),
-                  Text(
-                    '$_counter',
-                    style: Theme.of(context).textTheme.display1,
-                  ),
-                  Text('현재 시간 - $currentTime'),
-                  */ /*Text(locationPermission && userLocation != null
-                      ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
-                      : '위치 권한 없음'),
-                  SwitchListTile(
-                      value: locationPermission,
-                      onChanged: _permissionChange,
-                      title: Text('위치 권한'))*/ /*
-                  // 위도 - userLocation.latitude
-                  // 경도 - userLocation.longitude
-                  // 고도 - userLocation.altitude
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
-  */ /*setLocation() async {
-    await location.changeSettings(
-        accuracy: LocationAccuracy.HIGH, interval: 1000);
-    LocationData currentLocation;
-
-    try {
-      bool status = await location.serviceEnabled();
-      bool permission = false;
-
-      print('Service status: $status');
-      if (status) {
-        permission = await location.requestPermission();
-        print('Permission: $permission');
-        if (permission) {
-          currentLocation = await location.getLocation();
-        }
-      } else {
-        bool statusResult = await location.requestService();
-        print('Service status activated after request: $statusResult');
-        if (statusResult) {
-          setLocation();
-        }
-      }
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        print('asdf');
-        currentLocation = null;
-      }
-    } catch (e) {
-      debugPrint(e);
-      currentLocation = null;
-    }
-
-    setState(() {
-      userLocation = currentLocation;
-      currentTime = new DateTime.now();
-    });
-  }*/ /*
-
-  void dispose() {
-    _refreshController.dispose();
-    super.dispose();
-  }
-}*/
