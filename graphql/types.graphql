@@ -1,0 +1,17 @@
+type Device @model {
+  id: ID! @isUnique
+  token: String! # fcm_token
+  apiCalls: [ApiCall!]! @relation(name: "ApiCallsByDevice", onDelete: CASCADE)
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# API 호출 시 저장
+type ApiCall @model {
+  id: ID! @isUnique
+  device: Device! @relation(name: "ApiCallsByDevice")
+  lat: String! # 위도
+  lng: String! # 경도
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
