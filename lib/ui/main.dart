@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 // models
-import 'package:misemeonjigadoeeo/models/device.dart';
+import 'package:misemeonjigadoeeo/models/user_location.dart';
 import 'package:misemeonjigadoeeo/models/fine_dust.dart';
 
 // providers
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
               theme: ThemeData.dark(),
               home: Consumer<AppProvider>(
                 builder: (context, provider, child) => HomePage(
-                    device: provider.device, fineDust: provider.fineDust),
+                    location: provider.device, fineDust: provider.fineDust),
               ))
           : CupertinoApp(
               title: 'Flutter Demo',
@@ -39,27 +39,27 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  final Device device;
+  final UserLocation location;
   final FineDust fineDust;
   var apiCallCount = 0;
 
-  HomePage({this.device, this.fineDust});
+  HomePage({this.location, this.fineDust});
 
   @override
   Widget build(BuildContext context) {
     return Platform.isAndroid
         ? Scaffold(
-            body: getPosition(device, fineDust),
+            body: getPosition(location, fineDust),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 print(fineDust.isLoaded);
                 Provider.of<AppProvider>(context, listen: false)
-                    .refreshPosition(device);
+                    .refreshPosition(location);
                 Provider.of<AppProvider>(context, listen: false)
-                    .refreshTime(device);
-                if (device.position != null) {
+                    .refreshTime(location);
+                if (location.position != null) {
                   Provider.of<AppProvider>(context, listen: false)
-                      .getFineDustInfo(fineDust, device.position);
+                      .getFineDustInfo(fineDust, location.position);
                 }
               },
               tooltip: 'Increment',
@@ -84,8 +84,8 @@ class HomePage extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                     return Container(
-                      child: device.position != null
-                          ? getFineDust(device, fineDust)
+                      child: location.position != null
+                          ? getFineDust(location, fineDust)
                           : Center(child: CircularProgressIndicator()),
                     );
                   }, childCount: 1),
@@ -95,16 +95,16 @@ class HomePage extends StatelessWidget {
           ));
   }
 
-  Widget getPosition(Device device, FineDust fineDust) {
-    if (device.position != null) {
-      return getFineDust(device, fineDust);
+  Widget getPosition(UserLocation location, FineDust fineDust) {
+    if (location.position != null) {
+      return getFineDust(location, fineDust);
     }
-    device.refreshPosition();
+    location.refreshPosition();
 
     return Center(child: CircularProgressIndicator());
   }
 
-  Widget getFineDust(Device device, FineDust fineDust) {
+  Widget getFineDust(UserLocation location, FineDust fineDust) {
     Widget fineDustWidget;
 
     if (fineDust.fineDustResponse != null) {
@@ -112,7 +112,7 @@ class HomePage extends StatelessWidget {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('현재 시간 - ${device.time}'),
+          Text('현재 시간 - ${location.time}'),
           SizedBox(
             height: 10,
           ),
@@ -130,7 +130,7 @@ class HomePage extends StatelessWidget {
         ],
       ));
     } else {
-      fineDust.getFineDustInfo(device.position);
+      fineDust.getFineDustInfo(location.position);
       fineDustWidget = Center(child: CircularProgressIndicator());
     }
 

@@ -1,6 +1,5 @@
 type Device @model {
   id: ID! @isUnique
-  token: String! # fcm_token
   apiCalls: [ApiCall!]! @relation(name: "ApiCallsByDevice", onDelete: CASCADE)
   createdAt: DateTime!
   updatedAt: DateTime!
