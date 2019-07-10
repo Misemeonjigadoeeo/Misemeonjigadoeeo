@@ -1,14 +1,7 @@
-import 'dart:collection';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:misemeonjigadoeeo/models/fine_dust.dart';
-
-import 'package:misemeonjigadoeeo/response/fine_dust_response.dart';
-import 'package:misemeonjigadoeeo/service/fine_dust_service.dart';
-
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:misemeonjigadoeeo/models/fine_dust.dart';
 
 mixin FineDustModel on ChangeNotifier {
   final FineDust _fineDust = FineDust();
