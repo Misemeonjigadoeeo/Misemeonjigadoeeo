@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UserLocation {
   DateTime time = DateTime.now();
