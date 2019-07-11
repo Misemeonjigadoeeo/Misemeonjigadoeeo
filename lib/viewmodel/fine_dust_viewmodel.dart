@@ -1,15 +1,18 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:misemeonjigadoeeo/models/fine_dust.dart';
+import 'package:misemeonjigadoeeo/response/fine_dust_response.dart';
+import 'package:misemeonjigadoeeo/service/fine_dust_service.dart';
 
 import 'base_viewmodel.dart';
 
 mixin FineDustViewModel on BaseViewModel {
-  final FineDust _fineDust = FineDust();
 
-  FineDust get fineDust => _fineDust;
+  FineDustService fineDustService = FineDustService();
+  FineDustResponse fineDustResponse;
 
-  getFineDustInfo(FineDust fineDust, Position pos) {
-    fineDust.getFineDustInfo(pos);
+  getFineDustInfo(Position pos) async {
+    isLoaded = false;
+    fineDustResponse = await fineDustService.getFineDustInfoByLatLng(pos);
+    isLoaded = true;
     notifyListeners();
   }
 }
