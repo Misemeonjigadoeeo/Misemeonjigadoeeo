@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:misemeonjigadoeeo/models/user_location.dart';
 
-mixin UserLocationViewModel on ChangeNotifier {
+import 'base_viewmodel.dart';
+
+mixin UserLocationViewModel on BaseViewModel {
   final UserLocation _userLocation = UserLocation();
 
   UserLocation get device => _userLocation;
