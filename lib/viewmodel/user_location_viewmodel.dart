@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:misemeonjigadoeeo/models/user_location.dart';
 import 'package:misemeonjigadoeeo/service/user_location_service.dart';
 
 import 'base_viewmodel.dart';
