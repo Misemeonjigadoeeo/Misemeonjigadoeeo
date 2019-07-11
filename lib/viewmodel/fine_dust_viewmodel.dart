@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:misemeonjigadoeeo/models/fine_dust.dart';
 
-mixin FineDustModel on ChangeNotifier {
+mixin FineDustViewModel on ChangeNotifier {
   final FineDust _fineDust = FineDust();
 
   FineDust get fineDust => _fineDust;

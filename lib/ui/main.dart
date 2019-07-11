@@ -10,7 +10,7 @@ import 'package:misemeonjigadoeeo/models/user_location.dart';
 import 'package:misemeonjigadoeeo/models/fine_dust.dart';
 
 // providers
-import 'package:misemeonjigadoeeo/providers/providers.dart';
+import 'package:misemeonjigadoeeo/providers/app_viewmodel.dart';
 
 void main() {
   runApp(MyApp());
