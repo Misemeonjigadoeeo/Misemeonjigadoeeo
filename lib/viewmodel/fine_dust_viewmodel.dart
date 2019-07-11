@@ -8,11 +8,17 @@ mixin FineDustViewModel on BaseViewModel {
 
   FineDustService fineDustService = FineDustService();
   FineDustResponse fineDustResponse;
+  DateTime updatedDateTime;
 
   getFineDustInfo(Position pos) async {
     isLoaded = false;
     fineDustResponse = await fineDustService.getFineDustInfoByLatLng(pos);
+    refreshDateTime();
     isLoaded = true;
     notifyListeners();
+  }
+
+  refreshDateTime() {
+    updatedDateTime = DateTime.now();
   }
 }

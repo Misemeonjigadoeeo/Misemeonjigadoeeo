@@ -7,17 +7,11 @@ mixin UserLocationViewModel on BaseViewModel {
 
   final UserLocationService userLocationService = UserLocationService();
   Position position;
-  DateTime updatedDateTime;
 
   refreshPosition() async {
     isLoaded = false;
     position = await userLocationService.getLastKnownPosition();
-    refreshTime();
     isLoaded = true;
     notifyListeners();
-  }
-
-  refreshTime() {
-    updatedDateTime = DateTime.now();
   }
 }
