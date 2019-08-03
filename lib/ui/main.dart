@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:misemeonjigadoeeo/viewmodel/app_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
 
