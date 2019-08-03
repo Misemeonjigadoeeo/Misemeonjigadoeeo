@@ -4,18 +4,17 @@ import 'package:misemeonjigadoeeo/service/fine_dust_service.dart';
 
 import 'base_viewmodel.dart';
 
-mixin FineDustViewModel on BaseViewModel {
+class FineDustViewModel extends BaseViewModel {
 
   FineDustService fineDustService = FineDustService();
   FineDustResponse fineDustResponse;
   DateTime updatedDateTime;
 
-  getFineDustInfo(Position pos) async {
-    isLoaded = false;
+  Future<void> getFineDustInfo(Position pos) async {
+    changeLoadingState();
     fineDustResponse = await fineDustService.getFineDustInfoByLatLng(pos);
     refreshDateTime();
-    isLoaded = true;
-    notifyListeners();
+    changeLoadingState();
   }
 
   refreshDateTime() {

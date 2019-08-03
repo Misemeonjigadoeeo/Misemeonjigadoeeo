@@ -3,15 +3,14 @@ import 'package:misemeonjigadoeeo/service/user_location_service.dart';
 
 import 'base_viewmodel.dart';
 
-mixin UserLocationViewModel on BaseViewModel {
+class UserLocationViewModel extends BaseViewModel {
 
   final UserLocationService userLocationService = UserLocationService();
   Position position;
 
-  refreshPosition() async {
-    isLoaded = false;
+  Future<void> refreshPosition() async {
+    changeLoadingState();
     position = await userLocationService.getLastKnownPosition();
-    isLoaded = true;
     notifyListeners();
   }
 }
