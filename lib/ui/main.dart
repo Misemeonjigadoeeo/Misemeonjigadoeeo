@@ -79,8 +79,11 @@ class HomePage extends StatelessWidget {
                     itemExtent: 100,
                     delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
-                      return Consumer<FineDustViewModel>(
-                        builder: (context, fineDust, child) {
+                      return Consumer2<UserLocationViewModel, FineDustViewModel>(
+                        builder: (context, userLocation, fineDust, child) {
+                          if(userLocation.position == null) {
+                            userLocation.refreshPosition();
+                          }
                           if (fineDust.isLoading == null || !fineDust.isLoading) {
                             updateFineDustInfo(context);
                             return Center(
@@ -96,6 +99,19 @@ class HomePage extends StatelessWidget {
               ),
             ),
           );
+  }
+
+  Widget loadingIndicator() {
+    Widget _indicatorWidget;
+
+    if(Platform.isAndroid) {
+      _indicatorWidget = Center(child: CircularProgressIndicator(),);
+    }
+    else if(Platform.isIOS) {
+      _indicatorWidget = Center(child: CupertinoActivityIndicator(),);
+    }
+
+    return _indicatorWidget;
   }
 
   void updateFineDustInfo(BuildContext context) {
