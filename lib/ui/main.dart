@@ -39,27 +39,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  UserLocationViewModel _userLocationViewModel;
-  FineDustViewModel _fineDustViewModel;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    _userLocationViewModel =
-        Provider.of<UserLocationViewModel>(context, listen: false);
-    _fineDustViewModel = Provider.of<FineDustViewModel>(context);
-
-    updateFineDustInfo();
-  }
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Platform.isAndroid
@@ -67,16 +47,17 @@ class _HomePageState extends State<HomePage> {
             body: Consumer<FineDustViewModel>(
               builder: (context, fineDust, child) {
                 if (fineDust.isLoaded == null || !fineDust.isLoaded) {
+                  updateFineDustInfo(context);
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }
-                return showFineDustWidget();
+                return showFineDustWidget(context);
               },
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                updateFineDustInfo();
+                updateFineDustInfo(context);
               },
               tooltip: 'Increment',
               child: Icon(Icons.refresh),
@@ -90,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                     onRefresh: () {
                       return Future<void>.delayed(const Duration(seconds: 1))
                         ..then<void>((_) {
-                          updateFineDustInfo();
+                          updateFineDustInfo(context);
                         });
                     },
                   ),
@@ -100,12 +81,13 @@ class _HomePageState extends State<HomePage> {
                         (BuildContext context, int index) {
                       return Consumer<FineDustViewModel>(
                         builder: (context, fineDust, child) {
-                          if (fineDust.isLoaded == null || fineDust.isLoaded) {
+                          if (fineDust.isLoaded == null || !fineDust.isLoaded) {
+                            updateFineDustInfo(context);
                             return Center(
                               child: CupertinoActivityIndicator(),
                             );
                           }
-                          return showFineDustWidget();
+                          return showFineDustWidget(context);
                         },
                       );
                     }, childCount: 1),
@@ -116,34 +98,41 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
-  void updateFineDustInfo() {
-    _userLocationViewModel.refreshPosition().then((_) {
-      _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position);
+  void updateFineDustInfo(BuildContext context) {
+    Provider.of<UserLocationViewModel>(context, listen: false)
+        .refreshPosition()
+        .then((_) {
+      Provider.of<FineDustViewModel>(context).getFineDustInfo(
+          Provider
+              .of<UserLocationViewModel>(context, listen: false)
+              .position);
     });
   }
 
-  Widget showFineDustWidget() {
+  Widget showFineDustWidget(BuildContext context) {
     return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text('현재 시간 - ${_fineDustViewModel.updatedDateTime.toString()}'),
-        SizedBox(
-          height: 10,
-        ),
-        Text(
-            '미세먼지 정보 : ${_fineDustViewModel.fineDustResponse.iaqi.pm25.v.toString()}'),
-        /*Text(locationPermission && userLocation != null
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+              '현재 시간 - ${Provider.of<FineDustViewModel>(context, listen: false).updatedDateTime.toString()}'),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+              '미세먼지 정보 : ${Provider.of<FineDustViewModel>(context, listen: false).fineDustResponse.iaqi.pm25.v.toString()}'),
+          /*Text(locationPermission && userLocation != null
                     ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                     : '위치 권한 없음'),
                 SwitchListTile(
                     value: locationPermission,
                     onChanged: _permissionChange,
                     title: Text('위치 권한'))*/
-        // 위도 - userLocation.latitude
-        // 경도 - userLocation.longitude
-        // 고도 - userLocation.altitude
-      ],
-    ));
+          // 위도 - userLocation.latitude
+          // 경도 - userLocation.longitude
+          // 고도 - userLocation.altitude
+        ],
+      ),
+    );
   }
 }
