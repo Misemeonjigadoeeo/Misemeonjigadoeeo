@@ -9,8 +9,8 @@ class UserLocationViewModel extends BaseViewModel {
   Position position;
 
   Future<void> refreshPosition() async {
-    changeLoadingState();
+    isLoading = true;
     position = await userLocationService.getLastKnownPosition();
-    notifyListeners();
+    isLoading = false;
   }
 }

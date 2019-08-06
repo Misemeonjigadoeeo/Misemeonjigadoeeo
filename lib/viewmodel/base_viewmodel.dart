@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class BaseViewModel extends ChangeNotifier {
-  bool isLoaded;
-
-  void changeLoadingState() {
-    if(isLoaded == null) {
-      isLoaded = false;
-    }
-    else {
-      isLoaded = !isLoaded;
-    }
-
+class BaseViewModel with ChangeNotifier {
+  bool _isLoading = false;
+  get isLoading => _isLoading;
+  set isLoading(bool isLoading) {
+    _isLoading = isLoading;
     notifyListeners();
   }
 }

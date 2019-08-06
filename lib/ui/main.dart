@@ -46,7 +46,7 @@ class HomePage extends StatelessWidget {
         ? Scaffold(
             body: Consumer<FineDustViewModel>(
               builder: (context, fineDust, child) {
-                if (fineDust.isLoaded == null || !fineDust.isLoaded) {
+                if (fineDust.isLoading == null || !fineDust.isLoading) {
                   updateFineDustInfo(context);
                   return Center(
                     child: CircularProgressIndicator(),
@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
                         (BuildContext context, int index) {
                       return Consumer<FineDustViewModel>(
                         builder: (context, fineDust, child) {
-                          if (fineDust.isLoaded == null || !fineDust.isLoaded) {
+                          if (fineDust.isLoading == null || !fineDust.isLoading) {
                             updateFineDustInfo(context);
                             return Center(
                               child: CupertinoActivityIndicator(),

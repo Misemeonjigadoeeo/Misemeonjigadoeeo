@@ -11,10 +11,10 @@ class FineDustViewModel extends BaseViewModel {
   DateTime updatedDateTime;
 
   Future<void> getFineDustInfo(Position pos) async {
-    changeLoadingState();
+    isLoading = true;
     fineDustResponse = await fineDustService.getFineDustInfoByLatLng(pos);
     refreshDateTime();
-    changeLoadingState();
+    isLoading = false;
   }
 
   refreshDateTime() {
