@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
       child: Platform.isAndroid
           ? MaterialApp(
               title: 'Flutter Demo',
-              theme: ThemeData.dark(),
               home: HomePage(),
             )
           : CupertinoApp(
@@ -40,7 +39,6 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-
   UserLocationViewModel _userLocationViewModel;
   FineDustViewModel _fineDustViewModel;
   @override
@@ -50,7 +48,19 @@ class HomePage extends StatelessWidget {
 
     return Platform.isAndroid
         ? Scaffold(
-            body: returnWidget(),
+            appBar: AppBar(),
+            body: RefreshIndicator(
+                child: ListView(
+                  children: <Widget>[
+                    returnWidget(),
+                  ],
+                ),
+                onRefresh: () {
+                  return Future<void>.delayed(Duration(seconds: 1)).then((_) {
+                    updateFineDustInfo();
+                  });
+                }
+            ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 updateFineDustInfo();
@@ -73,7 +83,8 @@ class HomePage extends StatelessWidget {
                   ),
                   SliverFixedExtentList(
                     itemExtent: 100,
-                    delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
                       return returnWidget();
                     }, childCount: 1),
                   )
@@ -86,21 +97,22 @@ class HomePage extends StatelessWidget {
   Widget loadingIndicator() {
     Widget _indicatorWidget;
 
-    if(Platform.isAndroid) {
-      _indicatorWidget = Center(child: CircularProgressIndicator(),);
-    }
-    else if(Platform.isIOS) {
-      _indicatorWidget = Center(child: CupertinoActivityIndicator(),);
+    if (Platform.isAndroid) {
+      _indicatorWidget = Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (Platform.isIOS) {
+      _indicatorWidget = Center(
+        child: CupertinoActivityIndicator(),
+      );
     }
 
     return _indicatorWidget;
   }
 
   void updateFineDustInfo() {
-    _userLocationViewModel
-        .refreshPosition()
-        .then((_) {
-          _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position);
+    _userLocationViewModel.refreshPosition().then((_) {
+      _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position);
     });
   }
 
@@ -109,8 +121,7 @@ class HomePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
-              '현재 시간 - ${_fineDustViewModel.updatedDateTime.toString()}'),
+          Text('현재 시간 - ${_fineDustViewModel.updatedDateTime.toString()}'),
           SizedBox(
             height: 10,
           ),
@@ -134,14 +145,14 @@ class HomePage extends StatelessWidget {
   Widget returnWidget() {
     Widget returnWidget;
 
-    if(_userLocationViewModel.isLoading == null && _fineDustViewModel.isLoading == null) {
+    if (_userLocationViewModel.isLoading == null &&
+        _fineDustViewModel.isLoading == null) {
       updateFineDustInfo();
       returnWidget = loadingIndicator();
-    }
-    else if(_userLocationViewModel.isLoading || _fineDustViewModel.isLoading) {
+    } else if (_userLocationViewModel.isLoading ||
+        _fineDustViewModel.isLoading) {
       returnWidget = loadingIndicator();
-    }
-    else {
+    } else {
       returnWidget = showFineDustWidget();
     }
     return returnWidget;
