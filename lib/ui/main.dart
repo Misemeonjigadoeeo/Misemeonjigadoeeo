@@ -40,24 +40,20 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
+
+  UserLocationViewModel _userLocationViewModel;
+  FineDustViewModel _fineDustViewModel;
   @override
   Widget build(BuildContext context) {
+    _userLocationViewModel = Provider.of(context, listen: false);
+    _fineDustViewModel = Provider.of(context);
+
     return Platform.isAndroid
         ? Scaffold(
-            body: Consumer<FineDustViewModel>(
-              builder: (context, fineDust, child) {
-                if (fineDust.isLoading == null || !fineDust.isLoading) {
-                  updateFineDustInfo(context);
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return showFineDustWidget(context);
-              },
-            ),
+            body: returnWidget(),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                updateFineDustInfo(context);
+                updateFineDustInfo();
               },
               tooltip: 'Increment',
               child: Icon(Icons.refresh),
@@ -71,28 +67,14 @@ class HomePage extends StatelessWidget {
                     onRefresh: () {
                       return Future<void>.delayed(const Duration(seconds: 1))
                         ..then<void>((_) {
-                          updateFineDustInfo(context);
+                          updateFineDustInfo();
                         });
                     },
                   ),
                   SliverFixedExtentList(
                     itemExtent: 100,
-                    delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                      return Consumer2<UserLocationViewModel, FineDustViewModel>(
-                        builder: (context, userLocation, fineDust, child) {
-                          if(userLocation.position == null) {
-                            userLocation.refreshPosition();
-                          }
-                          if (fineDust.isLoading == null || !fineDust.isLoading) {
-                            updateFineDustInfo(context);
-                            return Center(
-                              child: CupertinoActivityIndicator(),
-                            );
-                          }
-                          return showFineDustWidget(context);
-                        },
-                      );
+                    delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                      return returnWidget();
                     }, childCount: 1),
                   )
                 ],
@@ -114,29 +96,26 @@ class HomePage extends StatelessWidget {
     return _indicatorWidget;
   }
 
-  void updateFineDustInfo(BuildContext context) {
-    Provider.of<UserLocationViewModel>(context, listen: false)
+  void updateFineDustInfo() {
+    _userLocationViewModel
         .refreshPosition()
         .then((_) {
-      Provider.of<FineDustViewModel>(context).getFineDustInfo(
-          Provider
-              .of<UserLocationViewModel>(context, listen: false)
-              .position);
+          _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position);
     });
   }
 
-  Widget showFineDustWidget(BuildContext context) {
+  Widget showFineDustWidget() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-              '현재 시간 - ${Provider.of<FineDustViewModel>(context, listen: false).updatedDateTime.toString()}'),
+              '현재 시간 - ${_fineDustViewModel.updatedDateTime.toString()}'),
           SizedBox(
             height: 10,
           ),
           Text(
-              '미세먼지 정보 : ${Provider.of<FineDustViewModel>(context, listen: false).fineDustResponse.iaqi.pm25.v.toString()}'),
+              '미세먼지 정보 : ${_fineDustViewModel.fineDustResponse.iaqi.pm25.v.toString()}'),
           /*Text(locationPermission && userLocation != null
                     ? '현재 위치 - ${userLocation.latitude}, ${userLocation.longitude}'
                     : '위치 권한 없음'),
@@ -150,5 +129,21 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget returnWidget() {
+    Widget returnWidget;
+
+    if(_userLocationViewModel.isLoading == null && _fineDustViewModel.isLoading == null) {
+      updateFineDustInfo();
+      returnWidget = loadingIndicator();
+    }
+    else if(_userLocationViewModel.isLoading || _fineDustViewModel.isLoading) {
+      returnWidget = loadingIndicator();
+    }
+    else {
+      returnWidget = showFineDustWidget();
+    }
+    return returnWidget;
   }
 }
