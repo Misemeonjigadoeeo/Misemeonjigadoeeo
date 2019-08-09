@@ -15,6 +15,7 @@ class FineDustViewModel extends BaseViewModel {
     fineDustResponse = await fineDustService.getFineDustInfoByLatLng(pos);
     refreshDateTime();
     isLoading = false;
+    notifyListeners();
   }
 
   refreshDateTime() {

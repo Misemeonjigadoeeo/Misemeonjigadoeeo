@@ -12,5 +12,6 @@ class UserLocationViewModel extends BaseViewModel {
     isLoading = true;
     position = await userLocationService.getLastKnownPosition();
     isLoading = false;
+    notifyListeners();
   }
 }

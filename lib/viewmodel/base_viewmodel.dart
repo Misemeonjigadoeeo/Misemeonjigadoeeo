@@ -6,6 +6,5 @@ class BaseViewModel with ChangeNotifier {
   get isLoading => _isLoading;
   set isLoading(bool isLoading) {
     _isLoading = isLoading;
-    notifyListeners();
   }
 }
