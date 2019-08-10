@@ -48,7 +48,17 @@ class HomePage extends StatelessWidget {
 
     return Platform.isAndroid
         ? Scaffold(
-            appBar: AppBar(),
+            drawer: Drawer(),
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(""),
+              actions: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: 12.0),
+                  child: Icon(Icons.location_on),
+                )
+              ],
+            ),
             body: RefreshIndicator(
                 child: ListView(
                   children: <Widget>[
