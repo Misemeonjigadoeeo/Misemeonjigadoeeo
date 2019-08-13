@@ -25,6 +25,8 @@ KakaoLocalApiResponse _$KakaoLocalApiResponseFromJson(
 Map<String, dynamic> _$KakaoLocalApiResponseToJson(
         KakaoLocalApiResponse instance) =>
     <String, dynamic>{
-      'kakaoLocalApiMetaResponse': instance.kakaoLocalApiMetaResponse,
+      'kakaoLocalApiMetaResponse': instance.kakaoLocalApiMetaResponse?.toJson(),
       'kakaoLocalApiDocumentsResponse': instance.kakaoLocalApiDocumentsResponse
+          ?.map((e) => e?.toJson())
+          ?.toList()
     };

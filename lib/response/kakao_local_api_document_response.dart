@@ -5,7 +5,7 @@ import 'kakao_local_api_road_address_response.dart';
 
 part 'kakao_local_api_document_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class KakaoLocalApiDocumentResponse {
   final KakaoLocalApiRoadAddressResponse kakaoLocalApiRoadAddressResponse;
   final KakaoLocalApiAddressResponse kakaoLocalApiAddressResponse;

@@ -25,6 +25,7 @@ Map<String, dynamic> _$KakaoLocalApiDocumentResponseToJson(
         KakaoLocalApiDocumentResponse instance) =>
     <String, dynamic>{
       'kakaoLocalApiRoadAddressResponse':
-          instance.kakaoLocalApiRoadAddressResponse,
-      'kakaoLocalApiAddressResponse': instance.kakaoLocalApiAddressResponse
+          instance.kakaoLocalApiRoadAddressResponse?.toJson(),
+      'kakaoLocalApiAddressResponse':
+          instance.kakaoLocalApiAddressResponse?.toJson()
     };
