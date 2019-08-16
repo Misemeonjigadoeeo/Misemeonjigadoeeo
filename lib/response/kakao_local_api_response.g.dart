@@ -9,24 +9,23 @@ part of 'kakao_local_api_response.dart';
 KakaoLocalApiResponse _$KakaoLocalApiResponseFromJson(
     Map<String, dynamic> json) {
   return KakaoLocalApiResponse(
-      kakaoLocalApiMetaResponse: json['kakaoLocalApiMetaResponse'] == null
+      kakaoLocalApiMetaResponse: json['meta'] == null
           ? null
           : KakaoLocalApiMetaResponse.fromJson(
-              json['kakaoLocalApiMetaResponse'] as Map<String, dynamic>),
-      kakaoLocalApiDocumentsResponse:
-          (json['kakaoLocalApiDocumentsResponse'] as List)
-              ?.map((e) => e == null
-                  ? null
-                  : KakaoLocalApiDocumentResponse.fromJson(
-                      e as Map<String, dynamic>))
-              ?.toList());
+              json['meta'] as Map<String, dynamic>),
+      kakaoLocalApiDocumentsResponse: (json['documents'] as List)
+          ?.map((e) => e == null
+              ? null
+              : KakaoLocalApiDocumentResponse.fromJson(
+                  e as Map<String, dynamic>))
+          ?.toList());
 }
 
 Map<String, dynamic> _$KakaoLocalApiResponseToJson(
         KakaoLocalApiResponse instance) =>
     <String, dynamic>{
-      'kakaoLocalApiMetaResponse': instance.kakaoLocalApiMetaResponse?.toJson(),
-      'kakaoLocalApiDocumentsResponse': instance.kakaoLocalApiDocumentsResponse
+      'meta': instance.kakaoLocalApiMetaResponse?.toJson(),
+      'documents': instance.kakaoLocalApiDocumentsResponse
           ?.map((e) => e?.toJson())
           ?.toList()
     };

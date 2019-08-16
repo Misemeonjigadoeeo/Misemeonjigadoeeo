@@ -14,7 +14,7 @@ class FineDustService {
     final response = await http.get(apiUrl);
 
     if(response.statusCode == 200) {
-      debugPrint("${jsonDecode(response.body)['data'].toString()}");
+      print("${jsonDecode(response.body)['data'].toString()}");
       return FineDustResponse.fromJson(jsonDecode(response.body)['data']);
     }
     else {

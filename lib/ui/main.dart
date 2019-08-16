@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:misemeonjigadoeeo/response/kakao_local_api_document_response.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
 
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   UserLocationViewModel _userLocationViewModel;
   FineDustViewModel _fineDustViewModel;
+
   @override
   Widget build(BuildContext context) {
     _userLocationViewModel = Provider.of(context, listen: false);
@@ -51,7 +53,7 @@ class HomePage extends StatelessWidget {
             drawer: Drawer(),
             appBar: AppBar(
               centerTitle: true,
-              title: Text(""),
+              title: getTitleText(),
               actions: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 12.0),
@@ -83,6 +85,9 @@ class HomePage extends StatelessWidget {
             child: SafeArea(
               child: CustomScrollView(
                 slivers: <Widget>[
+                  CupertinoSliverNavigationBar(
+                    largeTitle: getTitleText(),
+                  ),
                   CupertinoSliverRefreshControl(
                     onRefresh: () {
                       return Future<void>.delayed(const Duration(seconds: 1))
@@ -122,7 +127,12 @@ class HomePage extends StatelessWidget {
 
   void updateFineDustInfo() {
     _userLocationViewModel.refreshPosition().then((_) {
-      _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position);
+      Future.wait([
+      _userLocationViewModel.updateCurrentAddress(),
+      _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position)
+      ]).then((_){
+        _fineDustViewModel.invokeNotifyListeners();
+      });
     });
   }
 
@@ -150,6 +160,32 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget getTitleText() {
+    String _title;
+    KakaoLocalApiDocumentResponse _kakaoLocalApiDocumentResponse;
+
+    if(_userLocationViewModel.kakaoLocalApiResponse == null || _userLocationViewModel.isLoading) {
+      _title = "위치 갱신중";
+    }
+    else {
+      if(_userLocationViewModel.kakaoLocalApiResponse.kakaoLocalApiDocumentsResponse.length == 0) {
+        _title = "주소 확인 불가";
+      }
+      else {
+        _kakaoLocalApiDocumentResponse =  _userLocationViewModel.kakaoLocalApiResponse.kakaoLocalApiDocumentsResponse[0];
+
+        if(_kakaoLocalApiDocumentResponse.kakaoLocalApiRoadAddressResponse == null) {
+          _title = _kakaoLocalApiDocumentResponse.kakaoLocalApiAddressResponse.addressName;
+        }
+        else {
+          _title = _kakaoLocalApiDocumentResponse.kakaoLocalApiRoadAddressResponse.addressName;
+        }
+      }
+    }
+
+    return Text(_title);
   }
 
   Widget returnWidget() {

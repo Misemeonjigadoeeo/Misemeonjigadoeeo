@@ -7,7 +7,9 @@ part 'kakao_local_api_response.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class KakaoLocalApiResponse {
+  @JsonKey(name: "meta")
   final KakaoLocalApiMetaResponse kakaoLocalApiMetaResponse;
+  @JsonKey(name: "documents")
   final List<KakaoLocalApiDocumentResponse> kakaoLocalApiDocumentsResponse;
 
   KakaoLocalApiResponse({

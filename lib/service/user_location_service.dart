@@ -24,9 +24,10 @@ class UserLocationService {
     String kakaoLocalApiBaseUrl = "https://dapi.kakao.com/v2/local/geo/coord2address.json?";
     final addressResponse = await http.get(
       kakaoLocalApiBaseUrl + "x=" + position.longitude.toString() + "&y=" + position.latitude.toString() + "&input_coord=WGS84",
-      headers: {HttpHeaders.authorizationHeader: "KakaoAK ${PrivateKey.kakaoRestApiKey}"}
+      headers: {"Authorization": "KakaoAK ${PrivateKey.kakaoRestApiKey}"}
     );
 
+    print(addressResponse.body);
     if(addressResponse.statusCode == 200) {
       return KakaoLocalApiResponse.fromJson(jsonDecode(addressResponse.body));
     }
