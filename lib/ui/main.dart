@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:misemeonjigadoeeo/response/kakao_local_api_document_response.dart';
+import 'package:misemeonjigadoeeo/ui/location_setting_page.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
 
@@ -55,9 +56,16 @@ class HomePage extends StatelessWidget {
               centerTitle: true,
               title: getTitleText(),
               actions: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 12.0),
-                  child: Icon(Icons.location_on),
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.location_on),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LocationSettingPage()));
+                  }
                 )
               ],
             ),
