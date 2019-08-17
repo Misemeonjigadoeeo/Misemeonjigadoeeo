@@ -88,12 +88,21 @@ class HomePage extends StatelessWidget {
             ),
           )
         : CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: getTitleText(),
+              trailing: GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.location_on),
+                  ),
+                  onTap: () {
+                    route(context, LocationSettingPage());
+                  }
+              ),
+            ),
             child: SafeArea(
               child: CustomScrollView(
                 slivers: <Widget>[
-                  CupertinoSliverNavigationBar(
-                    largeTitle: getTitleText(),
-                  ),
                   CupertinoSliverRefreshControl(
                     onRefresh: () {
                       return Future<void>.delayed(const Duration(seconds: 1))
@@ -208,5 +217,17 @@ class HomePage extends StatelessWidget {
       returnWidget = showFineDustWidget();
     }
     return returnWidget;
+  }
+
+  void route(BuildContext context, Widget page) {
+    if (Platform.isAndroid) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => page));
+    } else if (Platform.isIOS) {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(builder: (context) => page));
+    }
   }
 }
