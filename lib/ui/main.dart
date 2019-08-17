@@ -1,12 +1,12 @@
-import 'dart:io';
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:misemeonjigadoeeo/response/kakao_local_api_document_response.dart';
 import 'package:misemeonjigadoeeo/ui/location_setting_page.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
-
 import 'package:provider/provider.dart';
 
 void main() {
@@ -62,9 +62,7 @@ class HomePage extends StatelessWidget {
                     child: Icon(Icons.location_on),
                   ),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LocationSettingPage()));
+                    route(context, LocationSettingPage());
                   }
                 )
               ],
