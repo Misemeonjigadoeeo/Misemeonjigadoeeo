@@ -1,11 +1,12 @@
-import 'dart:io';
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:misemeonjigadoeeo/response/kakao_local_api_document_response.dart';
+import 'package:misemeonjigadoeeo/ui/location_setting_page.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
-
 import 'package:provider/provider.dart';
 
 void main() {
@@ -55,9 +56,14 @@ class HomePage extends StatelessWidget {
               centerTitle: true,
               title: getTitleText(),
               actions: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 12.0),
-                  child: Icon(Icons.location_on),
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.location_on),
+                  ),
+                  onTap: () {
+                    route(context, LocationSettingPage());
+                  }
                 )
               ],
             ),
@@ -82,12 +88,21 @@ class HomePage extends StatelessWidget {
             ),
           )
         : CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: getTitleText(),
+              trailing: GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.location_on),
+                  ),
+                  onTap: () {
+                    route(context, LocationSettingPage());
+                  }
+              ),
+            ),
             child: SafeArea(
               child: CustomScrollView(
                 slivers: <Widget>[
-                  CupertinoSliverNavigationBar(
-                    largeTitle: getTitleText(),
-                  ),
                   CupertinoSliverRefreshControl(
                     onRefresh: () {
                       return Future<void>.delayed(const Duration(seconds: 1))
@@ -202,5 +217,17 @@ class HomePage extends StatelessWidget {
       returnWidget = showFineDustWidget();
     }
     return returnWidget;
+  }
+
+  void route(BuildContext context, Widget page) {
+    if (Platform.isAndroid) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => page));
+    } else if (Platform.isIOS) {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(builder: (context) => page));
+    }
   }
 }
