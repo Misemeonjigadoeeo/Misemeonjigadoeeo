@@ -64,6 +64,7 @@ Build/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 **/ios/Runner/AppSecrets.swift
+**/ios/Secret.xcconfig
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
