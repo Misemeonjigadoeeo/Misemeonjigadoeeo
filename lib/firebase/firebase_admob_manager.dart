@@ -40,7 +40,7 @@ class FirebaseAdmobManager {
 
   static Future<bool> initializeAdmob({String trackingId, bool analyticsEnabled = false}) async {
     bool result = await FirebaseAdMob.instance.initialize(
-        appId: null,
+        appId: admobAppId,
         trackingId: trackingId,
         analyticsEnabled: analyticsEnabled);
 
