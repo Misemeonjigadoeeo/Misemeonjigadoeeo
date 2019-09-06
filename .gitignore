@@ -75,3 +75,5 @@ Build/
 
 # private file
 secret/
+**/ios/Runner/GoogleService-Info.plist
+**/android/app/google-services.json
