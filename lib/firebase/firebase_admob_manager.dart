@@ -61,6 +61,7 @@ class FirebaseAdmobManager {
 
   static Future<bool> showBannerAd(BannerAd bannerAd) async {
     bool result;
+    
     bannerAd
       ..load()
       ..show().then((isSuccess) {
