@@ -13,7 +13,7 @@ class FirebaseAdmobManager {
     if (Platform.isAndroid) {
       _admobAppId = PrivateKey.androidAdmobAppId;
     } else if (Platform.isIOS) {
-      _admobAppId = PrivateKey.iosAdmobId;
+      _admobAppId = PrivateKey.iosAdmobAppId;
     } else
       _admobAppId = "";
 
