@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:misemeonjigadoeeo/components/webviews/kakao_address.dart';
 import 'package:misemeonjigadoeeo/response/kakao_local_api_document_response.dart';
 import 'package:misemeonjigadoeeo/ui/location_setting_page.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
@@ -57,28 +58,26 @@ class HomePage extends StatelessWidget {
               title: getTitleText(),
               actions: <Widget>[
                 GestureDetector(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 12.0),
-                    child: Icon(Icons.location_on),
-                  ),
-                  onTap: () {
-                    route(context, LocationSettingPage());
-                  }
-                )
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 12.0),
+                      child: Icon(Icons.location_on),
+                    ),
+                    onTap: () {
+                      route(context, LocationSettingPage());
+                    })
               ],
             ),
             body: RefreshIndicator(
                 child: ListView(
                   children: <Widget>[
-                    returnWidget(),
+                    returnWidget(context),
                   ],
                 ),
                 onRefresh: () {
                   return Future<void>.delayed(Duration(seconds: 1)).then((_) {
                     updateFineDustInfo();
                   });
-                }
-            ),
+                }),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 updateFineDustInfo();
@@ -97,8 +96,7 @@ class HomePage extends StatelessWidget {
                   ),
                   onTap: () {
                     route(context, LocationSettingPage());
-                  }
-              ),
+                  }),
             ),
             child: SafeArea(
               child: CustomScrollView(
@@ -115,7 +113,7 @@ class HomePage extends StatelessWidget {
                     itemExtent: 100,
                     delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
-                      return returnWidget();
+                      return returnWidget(context);
                     }, childCount: 1),
                   )
                 ],
@@ -143,15 +141,15 @@ class HomePage extends StatelessWidget {
   void updateFineDustInfo() {
     _userLocationViewModel.refreshPosition().then((_) {
       Future.wait([
-      _userLocationViewModel.updateCurrentAddress(),
-      _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position)
-      ]).then((_){
+        _userLocationViewModel.updateCurrentAddress(),
+        _fineDustViewModel.getFineDustInfo(_userLocationViewModel.position)
+      ]).then((_) {
         _fineDustViewModel.invokeNotifyListeners();
       });
     });
   }
 
-  Widget showFineDustWidget() {
+  Widget showFineDustWidget(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -172,6 +170,12 @@ class HomePage extends StatelessWidget {
           // 위도 - userLocation.latitude
           // 경도 - userLocation.longitude
           // 고도 - userLocation.altitude
+          RaisedButton(
+            child: Text('주소 검색'),
+            onPressed: () {
+              route(context, KakaoAddress());
+            },
+          )
         ],
       ),
     );
@@ -181,21 +185,25 @@ class HomePage extends StatelessWidget {
     String _title;
     KakaoLocalApiDocumentResponse _kakaoLocalApiDocumentResponse;
 
-    if(_userLocationViewModel.kakaoLocalApiResponse == null || _userLocationViewModel.isLoading) {
+    if (_userLocationViewModel.kakaoLocalApiResponse == null ||
+        _userLocationViewModel.isLoading) {
       _title = "위치 갱신중";
-    }
-    else {
-      if(_userLocationViewModel.kakaoLocalApiResponse.kakaoLocalApiDocumentsResponse.length == 0) {
+    } else {
+      if (_userLocationViewModel
+              .kakaoLocalApiResponse.kakaoLocalApiDocumentsResponse.length ==
+          0) {
         _title = "주소 확인 불가";
-      }
-      else {
-        _kakaoLocalApiDocumentResponse =  _userLocationViewModel.kakaoLocalApiResponse.kakaoLocalApiDocumentsResponse[0];
+      } else {
+        _kakaoLocalApiDocumentResponse = _userLocationViewModel
+            .kakaoLocalApiResponse.kakaoLocalApiDocumentsResponse[0];
 
-        if(_kakaoLocalApiDocumentResponse.kakaoLocalApiRoadAddressResponse == null) {
-          _title = _kakaoLocalApiDocumentResponse.kakaoLocalApiAddressResponse.addressName;
-        }
-        else {
-          _title = _kakaoLocalApiDocumentResponse.kakaoLocalApiRoadAddressResponse.addressName;
+        if (_kakaoLocalApiDocumentResponse.kakaoLocalApiRoadAddressResponse ==
+            null) {
+          _title = _kakaoLocalApiDocumentResponse
+              .kakaoLocalApiAddressResponse.addressName;
+        } else {
+          _title = _kakaoLocalApiDocumentResponse
+              .kakaoLocalApiRoadAddressResponse.addressName;
         }
       }
     }
@@ -203,7 +211,7 @@ class HomePage extends StatelessWidget {
     return Text(_title);
   }
 
-  Widget returnWidget() {
+  Widget returnWidget(BuildContext context) {
     Widget returnWidget;
 
     if (_userLocationViewModel.isLoading == null &&
@@ -214,20 +222,16 @@ class HomePage extends StatelessWidget {
         _fineDustViewModel.isLoading) {
       returnWidget = loadingIndicator();
     } else {
-      returnWidget = showFineDustWidget();
+      returnWidget = showFineDustWidget(context);
     }
     return returnWidget;
   }
 
   void route(BuildContext context, Widget page) {
     if (Platform.isAndroid) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => page));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => page));
     } else if (Platform.isIOS) {
-      Navigator.push(
-        context,
-        CupertinoPageRoute(builder: (context) => page));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => page));
     }
   }
 }
