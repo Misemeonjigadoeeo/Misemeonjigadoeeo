@@ -32,7 +32,7 @@ class FirebaseAdmobManager {
         _bannerAdUnitId = "";
       }
     } else {
-      _bannerAdUnitId = FirebaseAdMob.testAppId;
+      _bannerAdUnitId = BannerAd.testAdUnitId;
     }
 
     return _bannerAdUnitId;
@@ -53,7 +53,7 @@ class FirebaseAdmobManager {
     MobileAdListener listener,
   }) {
     return BannerAd(
-        adUnitId: admobAppId,
+        adUnitId: bannerAdUnitId,
         size: size,
         targetingInfo: targetingInfo,
         listener: listener);
@@ -65,9 +65,11 @@ class FirebaseAdmobManager {
       ..load()
       ..show().then((isSuccess) {
         result = isSuccess;
-      }).catchError(() {
+      }).catchError((e) {
         result = false;
       });
+
+    print("릴리즈 모드 여부 : ${kReleaseMode.toString()} 유닛 ID : $bannerAdUnitId");
 
     return result;
   }

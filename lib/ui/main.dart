@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _userLocationViewModel = Provider.of(context, listen: false);
     _fineDustViewModel = Provider.of(context);
+    FirebaseAdmobManager.showBannerAd(_bannerAd);
 
     return Platform.isAndroid
         ? Scaffold(
