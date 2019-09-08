@@ -69,8 +69,6 @@ class FirebaseAdmobManager {
         result = false;
       });
 
-    print("릴리즈 모드 여부 : ${kReleaseMode.toString()} 유닛 ID : $bannerAdUnitId");
-
     return result;
   }
 }
