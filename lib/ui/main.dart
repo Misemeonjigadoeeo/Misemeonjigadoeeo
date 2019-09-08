@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:misemeonjigadoeeo/components/webviews/kakao_address.dart';
@@ -9,6 +10,7 @@ import 'package:misemeonjigadoeeo/ui/location_setting_page.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:misemeonjigadoeeo/firebase/firebase_admob_manager.dart';
 
 void main() {
   runApp(MyApp());
@@ -41,14 +43,34 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   UserLocationViewModel _userLocationViewModel;
   FineDustViewModel _fineDustViewModel;
+  BannerAd _bannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAdmobManager.initializeAdmob();
+    _bannerAd = FirebaseAdmobManager.getBannerAd();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     _userLocationViewModel = Provider.of(context, listen: false);
     _fineDustViewModel = Provider.of(context);
+    FirebaseAdmobManager.showBannerAd(_bannerAd);
 
     return Platform.isAndroid
         ? Scaffold(
