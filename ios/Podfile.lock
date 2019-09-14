@@ -68,6 +68,7 @@ PODS:
     - GoogleUtilities/Logger
   - location_permissions (2.0.2):
     - Flutter
+  - webview_flutter (0.0.1):
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
@@ -81,6 +82,7 @@ DEPENDENCIES:
   - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
+  - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -107,6 +109,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_maps_flutter/ios"
   location_permissions:
     :path: ".symlinks/plugins/location_permissions/ios"
+  webview_flutter:
+    :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
   Firebase: 9445469655a98e9010737f4bc4720e5bda465873
@@ -123,6 +127,7 @@ SPEC CHECKSUMS:
   GoogleMaps: f79af95cb24d869457b1f961c93d3ce8b2f3b848
   GoogleUtilities: c7a0b08bda3bf808be823ed151f0e28ac6866e71
   location_permissions: 67cfaff583afbb027a9f9248196f4b79c40f3cdc
+  webview_flutter: 1aa7604e6cdb451a9b7ed2c37d5454c0b440246b
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
 
 PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
