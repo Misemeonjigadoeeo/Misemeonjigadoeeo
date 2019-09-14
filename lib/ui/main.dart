@@ -5,12 +5,12 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:misemeonjigadoeeo/components/webviews/kakao_address.dart';
+import 'package:misemeonjigadoeeo/firebase/firebase_admob_manager.dart';
 import 'package:misemeonjigadoeeo/response/kakao_local_api_document_response.dart';
 import 'package:misemeonjigadoeeo/ui/location_setting_page.dart';
 import 'package:misemeonjigadoeeo/viewmodel/fine_dust_viewmodel.dart';
 import 'package:misemeonjigadoeeo/viewmodel/user_location_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:misemeonjigadoeeo/firebase/firebase_admob_manager.dart';
 
 void main() {
   runApp(MyApp());

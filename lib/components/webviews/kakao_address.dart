@@ -1,10 +1,8 @@
 import 'dart:io';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/material.dart';
+import 'package:misemeonjigadoeeo/secret/private_key.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class KakaoAddress extends StatefulWidget {
@@ -28,7 +26,7 @@ class _KakaoAddressState extends State<KakaoAddress> {
     return SafeArea(
       child: Container(
         child: WebView(
-          initialUrl: '',
+          initialUrl: PrivateKey.addressSearchUrl,
           javascriptMode: JavascriptMode.unrestricted,
           javascriptChannels: Set.from([
             JavascriptChannel(
@@ -39,12 +37,12 @@ class _KakaoAddressState extends State<KakaoAddress> {
           ]),
           onWebViewCreated: (WebViewController webViewController) async {
             _controller = webViewController;
-            String fileText =
+            /*String fileText =
                 await rootBundle.loadString('assets/html/kakao-address.html');
             _controller.loadUrl(Uri.dataFromString(fileText,
                     mimeType: 'text/html',
                     encoding: Encoding.getByName('utf-8'))
-                .toString());
+                .toString());*/
           },
         ),
       ),
