@@ -65,6 +65,8 @@ Build/
 **/ios/Runner/GeneratedPluginRegistrant.*
 **/ios/Runner/AppSecrets.swift
 **/ios/Secret.xcconfig
+**/ios/**/project.pbxproj
+
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
